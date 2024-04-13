@@ -35,7 +35,6 @@ const mockLocalDatastore = {
 jest.setMock('../LocalDatastore', mockLocalDatastore);
 
 const CoreManager = require('../CoreManager');
-const EventEmitter = require('../EventEmitter');
 const LiveQueryClient = require('../LiveQueryClient').default;
 const ParseObject = require('../ParseObject').default;
 const ParseQuery = require('../ParseQuery').default;
@@ -47,7 +46,6 @@ CoreManager.setLocalDatastore(mockLocalDatastore);
 describe('LiveQueryClient', () => {
   beforeEach(() => {
     mockLocalDatastore.isEnabled = false;
-    CoreManager.setEventEmitter(EventEmitter);
   });
 
   it('serverURL required', () => {

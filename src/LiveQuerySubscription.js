@@ -1,8 +1,10 @@
+import EventEmitter from './EventEmitter';
 import CoreManager from './CoreManager';
 import { resolvingPromise } from './promiseUtils';
 
 /**
  * Creates a new LiveQuery Subscription.
+ * Extends events.EventEmitter
  * <a href="https://nodejs.org/api/events.html#events_class_eventemitter">cloud functions</a>.
  *
  * <p>Response Object - Contains data from the client that made the request
@@ -82,25 +84,24 @@ import { resolvingPromise } from './promiseUtils';
  * subscription.on('close', () => {
  *
  * });</pre></p>
+ *
+ * @alias Parse.LiveQuerySubscription
  */
-class Subscription {
+class Subscription extends EventEmitter {
   /*
    * @param {string} id - subscription id
    * @param {string} query - query to subscribe to
    * @param {string} sessionToken - optional session token
    */
   constructor(id, query, sessionToken) {
+    super();
     this.id = id;
     this.query = query;
     this.sessionToken = sessionToken;
     this.subscribePromise = resolvingPromise();
     this.unsubscribePromise = resolvingPromise();
     this.subscribed = false;
-    const EventEmitter = CoreManager.getEventEmitter();
-    this.emitter = new EventEmitter();
 
-    this.on = this.emitter.on;
-    this.emit = this.emitter.emit;
     // adding listener so process does not crash
     // best practice is for developer to register their own listener
     this.on('error', () => {});

@@ -1,6 +1,7 @@
 /* global WebSocket */
 
 import CoreManager from './CoreManager';
+import EventEmitter from './EventEmitter';
 import ParseObject from './ParseObject';
 import LiveQuerySubscription from './LiveQuerySubscription';
 import { resolvingPromise } from './promiseUtils';
@@ -62,6 +63,7 @@ const generateInterval = k => {
 
 /**
  * Creates a new LiveQueryClient.
+ * Extends events.EventEmitter
  * <a href="https://nodejs.org/api/events.html#events_class_eventemitter">cloud functions</a>.
  *
  * A wrapper of a standard WebSocket client. We add several useful methods to
@@ -103,7 +105,7 @@ const generateInterval = k => {
  *
  * @alias Parse.LiveQueryClient
  */
-class LiveQueryClient {
+class LiveQueryClient extends EventEmitter {
   attempts: number;
   id: number;
   requestId: number;
@@ -136,6 +138,8 @@ class LiveQueryClient {
     sessionToken,
     installationId,
   }) {
+    super();
+
     if (!serverURL || serverURL.indexOf('ws') !== 0) {
       throw new Error(
         'You need to set a proper Parse LiveQuery server url before using LiveQueryClient'
@@ -156,11 +160,7 @@ class LiveQueryClient {
     this.connectPromise = resolvingPromise();
     this.subscriptions = new Map();
     this.state = CLIENT_STATE.INITIALIZED;
-    const EventEmitter = CoreManager.getEventEmitter();
-    this.emitter = new EventEmitter();
 
-    this.on = this.emitter.on;
-    this.emit = this.emitter.emit;
     // adding listener so process does not crash
     // best practice is for developer to register their own listener
     this.on('error', () => {});
