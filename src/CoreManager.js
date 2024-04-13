@@ -217,6 +217,13 @@ const CoreManager = {
     config[key] = value;
   },
 
+  setIfNeeded: function (key: string, value: any): any {
+    if (!config.hasOwnProperty(key)) {
+      config[key] = value;
+    }
+    return config[key];
+  },
+
   /* Specialized Controller Setters/Getters */
 
   setAnalyticsController(controller: AnalyticsController) {
